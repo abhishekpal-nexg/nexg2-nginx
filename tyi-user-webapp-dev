@@ -1,0 +1,42 @@
+server {
+        #root /var/www/;
+        #index index.html;
+        server_name www.fe-staging.theyogainstituteonline.org fe-staging.theyogainstituteonline.org;
+
+        location / {
+                proxy_pass http://127.0.0.1:5500;
+        }
+        location /blog-posts.xml {
+                proxy_pass https://cms-dev-be.theyogainstituteonline.org/v1/misc/data/sitemap;
+        }
+        autoindex_localtime on;
+        autoindex on;
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/fe-staging.theyogainstituteonline.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/fe-staging.theyogainstituteonline.org/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+server {
+    if ($host = www.fe-staging.theyogainstituteonline.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = fe-staging.theyogainstituteonline.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        server_name www.fe-staging.theyogainstituteonline.org fe-staging.theyogainstituteonline.org;
+    listen 80;
+    return 404; # managed by Certbot
+
+
+
+
+}
